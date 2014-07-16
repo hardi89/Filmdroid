@@ -66,8 +66,8 @@ public class Movie implements Parcelable {
 	private boolean foradult;
 	private double popularite;
 	private int nbnote;
-	public Movie(final JSONObject jsonmovie,
-			final Activity act) {
+	public Movie(final JSONObject jsonmovie, final ImageView imageView,
+			final Activity act, final TextView view) {
 		try {
 			this.name = jsonmovie.getString("original_title");
 			this.date = jsonmovie.getString("release_date");

@@ -2,24 +2,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    style="@style/margin10">"
-  <LinearLayout 
+    android:orientation="vertical" >
+   <LinearLayout 
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal">
-        <EditText
+        <TextView 
+            android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="75"
-            android:hint="Rechercher"
-            />
-        <Button 
+            android:layout_weight="50"
+            android:text="test"/>
+        <ImageView 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="25"
-            android:text="OK"
-            android:onClick="search"
+            android:layout_weight="50"
+            android:src="@drawable/nofavori"
+            android:onClick="favori"
             />
     </LinearLayout>
 

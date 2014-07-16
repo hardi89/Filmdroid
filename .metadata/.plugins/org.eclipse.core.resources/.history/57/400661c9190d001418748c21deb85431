@@ -60,6 +60,7 @@ public class MainActivity extends Activity {
 				HttpRetriever request = new HttpRetriever();
 				/*final InputStream test = request
 						.retrieveStream("https://api.themoviedb.org/3/discover/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");*/
+				final TextView testview = (TextView) findViewById(R.id.testview);
 				JSONParser jParser = new JSONParser();
 				final JSONObject json = jParser
 						.getJSONFromUrl("https://api.themoviedb.org/3/movie/upcoming?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");
@@ -68,7 +69,7 @@ public class MainActivity extends Activity {
 					Log.v("testjsonarray","testjsonarray "+jsonarray.get(0).toString());
 					ArrayList<Movie> list = new ArrayList<Movie>();
 					for(int i=0;i<jsonarray.length();i++){
-						list.add(new Movie(jsonarray.getJSONObject(i),myact));
+						list.add(new Movie(jsonarray.getJSONObject(i),(ImageView)findViewById(R.id.imageview),myact,testview));
 						/*try {
 							Thread.sleep(3000);
 						} catch (InterruptedException e) {
@@ -170,7 +171,4 @@ public class MainActivity extends Activity {
 		  return Uri.parse(path);
 		}
 
-	public void search(View v){
-		
-	}
 }

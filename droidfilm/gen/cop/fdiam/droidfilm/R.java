@@ -30,11 +30,9 @@ public final class R {
         public static final int description=0x7f080003;
         public static final int detail=0x7f080002;
         public static final int image=0x7f080001;
-        public static final int imageview=0x7f080007;
         public static final int img=0x7f080005;
-        public static final int listviewperso=0x7f080009;
+        public static final int listviewperso=0x7f080007;
         public static final int tabhost=0x7f080004;
-        public static final int testview=0x7f080008;
         public static final int title=0x7f080000;
         public static final int titre=0x7f080006;
     }

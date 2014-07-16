@@ -66,8 +66,8 @@ public class Movie implements Parcelable {
 	private boolean foradult;
 	private double popularite;
 	private int nbnote;
-	public Movie(final JSONObject jsonmovie,
-			final Activity act) {
+	public Movie(final JSONObject jsonmovie, final ImageView imageView,
+			final Activity act, final TextView view) {
 		try {
 			this.name = jsonmovie.getString("original_title");
 			this.date = jsonmovie.getString("release_date");
@@ -80,6 +80,7 @@ public class Movie implements Parcelable {
 			try {
 				String path = "http://image.tmdb.org/t/p/w500";
 				String path2 = jsonmovie.getString("poster_path");
+				new Thread(new Runnable() { public void run() {
 				if (path2.equals("null"))
 					path2 = jsonmovie.getString("backdrop_path");
 				String total = path + path2;
@@ -88,6 +89,7 @@ public class Movie implements Parcelable {
 				else
 					affiche = BitmapFactory.decodeResource(act.getResources(),
 							R.drawable.ic_launcher);
+				} }).start();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -170,7 +170,4 @@ public class MainActivity extends Activity {
 		  return Uri.parse(path);
 		}
 
-	public void search(View v){
-		
-	}
 }

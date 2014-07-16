@@ -66,8 +66,9 @@ public class Movie implements Parcelable {
 	private boolean foradult;
 	private double popularite;
 	private int nbnote;
-	public Movie(final JSONObject jsonmovie,
-			final Activity act) {
+
+	public Movie(final JSONObject jsonmovie, final ImageView imageView,
+			final Activity act, final TextView view) {
 		try {
 			this.name = jsonmovie.getString("original_title");
 			this.date = jsonmovie.getString("release_date");
@@ -76,18 +77,24 @@ public class Movie implements Parcelable {
 			this.setForadult(jsonmovie.getBoolean("adult"));
 			this.setPopularite(jsonmovie.getDouble("popularity"));
 			this.setNbnote(jsonmovie.getInt("vote_count"));
-			final HttpRetriever ret = new HttpRetriever();;
+			final HttpRetriever ret = new HttpRetriever();
+			;
 			try {
-				String path = "http://image.tmdb.org/t/p/w500";
-				String path2 = jsonmovie.getString("poster_path");
-				if (path2.equals("null"))
-					path2 = jsonmovie.getString("backdrop_path");
-				String total = path + path2;
-				if (!path2.equals("null"))
-					affiche = Utils.scaleDownBitmap(ret.retrieveBitmap(total),200,act);
-				else
-					affiche = BitmapFactory.decodeResource(act.getResources(),
-							R.drawable.ic_launcher);
+				new Thread(new Runnable() {
+					public void run() {
+						String path = "http://image.tmdb.org/t/p/w500";
+						String path2 = jsonmovie.getString("poster_path");
+						if (path2.equals("null"))
+							path2 = jsonmovie.getString("backdrop_path");
+						String total = path + path2;
+						if (!path2.equals("null"))
+							affiche = Utils.scaleDownBitmap(
+									ret.retrieveBitmap(total), 200, act);
+						else
+							affiche = BitmapFactory.decodeResource(
+									act.getResources(), R.drawable.ic_launcher);
+					}
+				}).start();
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -154,7 +161,7 @@ public class Movie implements Parcelable {
 		dest.writeString(name);
 		dest.writeString(date);
 		dest.writeInt(id);
-		dest.writeDouble(note);	
+		dest.writeDouble(note);
 	}
 
 	public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -175,7 +182,7 @@ public class Movie implements Parcelable {
 		this.date = in.readString();
 		this.id = in.readInt();
 		this.note = in.readDouble();
-		in.setDataPosition(0); 
+		in.setDataPosition(0);
 	}
 
 	public boolean isonfavori() {
