@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
 				final TextView testview = (TextView) findViewById(R.id.testview);
 				JSONParser jParser = new JSONParser();
 				final JSONObject json = jParser
-						.getJSONFromUrl("https://api.themoviedb.org/3/discover/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");
+						.getJSONFromUrl("https://api.themoviedb.org/3/movie/upcoming?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");
 				try {
 					JSONArray jsonarray = json.getJSONArray("results");
 					Log.v("testjsonarray","testjsonarray "+jsonarray.get(0).toString());
