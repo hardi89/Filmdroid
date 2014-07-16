@@ -63,7 +63,9 @@ public class Movie implements Parcelable {
 	private Bitmap affiche;
 	private int id;
 	private double note;
-
+	private boolean foradult;
+	private double popularite;
+	private int nbnote;
 	public Movie(final JSONObject jsonmovie, final ImageView imageView,
 			final Activity act, final TextView view) {
 		try {
@@ -71,7 +73,10 @@ public class Movie implements Parcelable {
 			this.date = jsonmovie.getString("release_date");
 			this.id = jsonmovie.getInt("id");
 			this.note = jsonmovie.getDouble("vote_average");
-			final HttpRetriever ret = new HttpRetriever();
+			this.setForadult(jsonmovie.getBoolean("adult"));
+			this.setPopularite(jsonmovie.getDouble("popularity"));
+			this.setNbnote(jsonmovie.getInt("vote_count"));
+			final HttpRetriever ret = new HttpRetriever();;
 			try {
 				String path = "http://image.tmdb.org/t/p/w500";
 				String path2 = jsonmovie.getString("poster_path");
@@ -79,7 +84,7 @@ public class Movie implements Parcelable {
 					path2 = jsonmovie.getString("backdrop_path");
 				String total = path + path2;
 				if (!path2.equals("null"))
-					affiche = ret.retrieveBitmap(total);
+					affiche = Utils.scaleDownBitmap(ret.retrieveBitmap(total),200,act);
 				else
 					affiche = BitmapFactory.decodeResource(act.getResources(),
 							R.drawable.ic_launcher);
@@ -145,12 +150,11 @@ public class Movie implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		affiche.writeToParcel(dest, 0);
 		dest.writeString(name);
 		dest.writeString(date);
 		dest.writeInt(id);
-		dest.writeDouble(note);
-		dest.writeValue(affiche);
-
+		dest.writeDouble(note);	
 	}
 
 	public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -166,10 +170,40 @@ public class Movie implements Parcelable {
 	};
 
 	public Movie(Parcel in) {
+		this.affiche = Bitmap.CREATOR.createFromParcel(in);
 		this.name = in.readString();
 		this.date = in.readString();
 		this.id = in.readInt();
 		this.note = in.readDouble();
-		this.affiche = in.readParcelable(Bitmap.class.getClassLoader());
+		in.setDataPosition(0); 
+	}
+
+	public boolean isonfavori() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isForadult() {
+		return foradult;
+	}
+
+	public void setForadult(boolean foradult) {
+		this.foradult = foradult;
+	}
+
+	public double getPopularite() {
+		return popularite;
+	}
+
+	public void setPopularite(double popularite) {
+		this.popularite = popularite;
+	}
+
+	public int getNbnote() {
+		return nbnote;
+	}
+
+	public void setNbnote(int nbnote) {
+		this.nbnote = nbnote;
 	}
 }

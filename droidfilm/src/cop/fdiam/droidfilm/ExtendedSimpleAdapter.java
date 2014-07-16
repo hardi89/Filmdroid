@@ -1,13 +1,17 @@
 package cop.fdiam.droidfilm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.ImageView;
@@ -21,24 +25,38 @@ public class ExtendedSimpleAdapter extends SimpleAdapter {
 	int[] to;
 	Context context;
 	LayoutInflater mInflater;
-
+	ArrayList<Movie> Listfinal;
 	public ExtendedSimpleAdapter(Context context,
 			List<HashMap<String, Object>> data, int resource, String[] from,
-			int[] to) {
+			int[] to,ArrayList<Movie> Listfinal) {
 		super(context, data, resource, from, to);
 		layout = resource;
 		map = data;
 		this.from = from;
 		this.to = to;
 		this.context = context;
+		this.Listfinal=Listfinal;
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		return this.createViewFromResource(position, convertView, parent,
+		View view =this.createViewFromResource(position, convertView, parent,
 				layout);
+		view.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Movie newmovie = Listfinal.get(position);
+        		Intent i = new Intent(context,DetailMovie.class);
+        		i.putExtra("movie", newmovie);
+        		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        		context.startActivity(i);
+				
+			}
+		});
+		return view;
 	}
 
 	private View createViewFromResource(int position, View convertView,

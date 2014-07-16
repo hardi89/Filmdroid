@@ -1,0 +1,22 @@
+package cop.fdiam.droidfilm;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class DetailMovie extends Activity{
+	private Movie movie;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.detailmovie);
+		
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+		    this.movie=extras.getParcelable("movie");
+		}
+		if(this.movie!=null){
+			
+		}
+	}
+
+}
