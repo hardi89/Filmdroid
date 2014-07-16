@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -172,78 +171,8 @@ public class MainActivity extends Activity {
 		}
 
 	public void search(View v){
-		EditText search = (EditText)findViewById(R.id.search);
-		final String path ="https://api.themoviedb.org/3/search/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d&query="+search.getText().toString();
-		new Thread(new Runnable() {
-			public void run() {
-				/*final InputStream test = request
-						.retrieveStream("https://api.themoviedb.org/3/discover/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");*/
-				JSONParser jParser = new JSONParser();
-				final JSONObject json = jParser.getJSONFromUrl(path);
-				try {
-					JSONArray jsonarray = json.getJSONArray("results");
-					Log.v("testjsonarray","testjsonarray "+jsonarray.get(0).toString());
-					ArrayList<Movie> list = new ArrayList<Movie>();
-					for(int i=0;i<jsonarray.length();i++){
-						list.add(new Movie(jsonarray.getJSONObject(i),myact));
-						/*try {
-							Thread.sleep(3000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}*/
-					}
-					
-					for(int i=0;i<list.size();i++)
-						Log.v("listmovie", "listmovie "+list.get(i).toString());
-					
-					ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
-					 
-			        //On d�clare la HashMap qui contiendra les informations pour un item
-			        
-			        for (Movie movie : list) {
-			        	HashMap<String, Object> map;
-						 
-				        //Cr�ation d'une HashMap pour ins�rer les informations du premier item de notre listView
-				        map = new HashMap<String, Object>();
-				        //on ins�re un �l�ment titre que l'on r�cup�rera dans le textView titre cr�� dans le fichier affichageitem.xml
-				        map.put("titre", movie.getName());
-				        //on ins�re un �l�ment description que l'on r�cup�rera dans le textView description cr�� dans le fichier affichageitem.xml
-				        map.put("description", movie.getDate());
-				        //on ins�re la r�f�rence � l'image (convertit en String car normalement c'est un int) que l'on r�cup�rera dans l'imageView cr�� dans le fichier affichageitem.xml
-				        //map.put("img", getImageUri(myact, movie.getAffiche()));
-				        map.put("img", movie.getAffiche());
-				        //enfin on ajoute cette hashMap dans la arrayList
-				        listItem.add(map);
-					}
-			        final ArrayList<HashMap<String, Object>> listIem2 = listItem;
-			        final ArrayList<Movie> Listfinal = list;
-			        runOnUiThread (new Thread(new Runnable() { 
-			            public void run() {
-			            	ExtendedSimpleAdapter mSchedule = new ExtendedSimpleAdapter (myact.getBaseContext(), listIem2, R.layout.fragment_main,
-				               new String[] {"img", "titre", "description"}, new int[] {R.id.img, R.id.titre, R.id.description},Listfinal);
-				 
-				        //On attribut � notre listView l'adapter que l'on vient de cr�er
-				        maListViewPerso.setAdapter(mSchedule);
-				        //Enfin on met un �couteur d'�v�nement sur notre listView
-			            }}));
-				        
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				//final String slurped = slurp(test, 50);
-				/*runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						testview.setText(json.toString());
-					}
-				});*/
-
-			}
-		}).start();
+		EditText 
+		string path ="https://api.themoviedb.org/3/search/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d&query="
 		
 	}
 }

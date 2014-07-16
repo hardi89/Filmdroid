@@ -173,13 +173,13 @@ public class MainActivity extends Activity {
 
 	public void search(View v){
 		EditText search = (EditText)findViewById(R.id.search);
-		final String path ="https://api.themoviedb.org/3/search/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d&query="+search.getText().toString();
+		String path ="https://api.themoviedb.org/3/search/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d&query="+search.getText().toString();
 		new Thread(new Runnable() {
 			public void run() {
 				/*final InputStream test = request
 						.retrieveStream("https://api.themoviedb.org/3/discover/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");*/
 				JSONParser jParser = new JSONParser();
-				final JSONObject json = jParser.getJSONFromUrl(path);
+				final JSONObject json = jParser.getJSONFromUrl("path");
 				try {
 					JSONArray jsonarray = json.getJSONArray("results");
 					Log.v("testjsonarray","testjsonarray "+jsonarray.get(0).toString());
