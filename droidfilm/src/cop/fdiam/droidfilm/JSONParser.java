@@ -40,7 +40,7 @@ public class JSONParser {
 			 * httpResponse.getEntity(); is = httpEntity.getContent();
 			 */
 			HttpRetriever request = new HttpRetriever();
-			is = request.retrieveStream("https://api.themoviedb.org/3/discover/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");
+			is = request.retrieveStream(url);
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"), 8);

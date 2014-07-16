@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import android.support.v4.app.Fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.TabActivity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -32,6 +33,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.os.Build;
 import android.provider.MediaStore.Images;
@@ -39,14 +42,17 @@ import android.provider.MediaStore.Images;
 public class MainActivity extends Activity {
 	private Activity myact = null;
 	private ListView maListViewPerso;
+	private TabHost tabHost;
+	private TabSpec tabSpec;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.testlayout);
+		//setContentView(R.layout.testlayout);
+	    
 	    maListViewPerso = (ListView) findViewById(R.id.listviewperso);
 		myact=this;
-        //Création de la ArrayList qui nous permettra de remplire la listView
+        //Crï¿½ation de la ArrayList qui nous permettra de remplire la listView
         
 		new Thread(new Runnable() {
 			public void run() {
@@ -56,7 +62,7 @@ public class MainActivity extends Activity {
 				final TextView testview = (TextView) findViewById(R.id.testview);
 				JSONParser jParser = new JSONParser();
 				final JSONObject json = jParser
-						.getJSONFromUrl("https://api.themoviedb.org/3/discover/movie?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");
+						.getJSONFromUrl("https://api.themoviedb.org/3/movie/upcoming?api_key=ca2145f2cd78643fae53b88ee4cf5b2d");
 				try {
 					JSONArray jsonarray = json.getJSONArray("results");
 					Log.v("testjsonarray","testjsonarray "+jsonarray.get(0).toString());
@@ -76,18 +82,18 @@ public class MainActivity extends Activity {
 					
 					ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
 					 
-			        //On déclare la HashMap qui contiendra les informations pour un item
+			        //On dï¿½clare la HashMap qui contiendra les informations pour un item
 			        
 			        for (Movie movie : list) {
 			        	HashMap<String, Object> map;
 						 
-				        //Création d'une HashMap pour insérer les informations du premier item de notre listView
+				        //Crï¿½ation d'une HashMap pour insï¿½rer les informations du premier item de notre listView
 				        map = new HashMap<String, Object>();
-				        //on insère un élément titre que l'on récupérera dans le textView titre créé dans le fichier affichageitem.xml
+				        //on insï¿½re un ï¿½lï¿½ment titre que l'on rï¿½cupï¿½rera dans le textView titre crï¿½ï¿½ dans le fichier affichageitem.xml
 				        map.put("titre", movie.getName());
-				        //on insère un élément description que l'on récupérera dans le textView description créé dans le fichier affichageitem.xml
+				        //on insï¿½re un ï¿½lï¿½ment description que l'on rï¿½cupï¿½rera dans le textView description crï¿½ï¿½ dans le fichier affichageitem.xml
 				        map.put("description", movie.getDate());
-				        //on insère la référence à l'image (convertit en String car normalement c'est un int) que l'on récupérera dans l'imageView créé dans le fichier affichageitem.xml
+				        //on insï¿½re la rï¿½fï¿½rence ï¿½ l'image (convertit en String car normalement c'est un int) que l'on rï¿½cupï¿½rera dans l'imageView crï¿½ï¿½ dans le fichier affichageitem.xml
 				        //map.put("img", getImageUri(myact, movie.getAffiche()));
 				        map.put("img", movie.getAffiche());
 				        //enfin on ajoute cette hashMap dans la arrayList
@@ -99,23 +105,23 @@ public class MainActivity extends Activity {
 			            	ExtendedSimpleAdapter mSchedule = new ExtendedSimpleAdapter (myact.getBaseContext(), listIem2, R.layout.fragment_main,
 				               new String[] {"img", "titre", "description"}, new int[] {R.id.img, R.id.titre, R.id.description});
 				 
-				        //On attribut à notre listView l'adapter que l'on vient de créer
+				        //On attribut ï¿½ notre listView l'adapter que l'on vient de crï¿½er
 				        maListViewPerso.setAdapter(mSchedule);
 				 
-				        //Enfin on met un écouteur d'évènement sur notre listView
+				        //Enfin on met un ï¿½couteur d'ï¿½vï¿½nement sur notre listView
 				        maListViewPerso.setOnItemClickListener(new OnItemClickListener() {
 							@Override
 				        	@SuppressWarnings("unchecked")
 				         	public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-								//on récupère la HashMap contenant les infos de notre item (titre, description, img)
+								//on rï¿½cupï¿½re la HashMap contenant les infos de notre item (titre, description, img)
 				        		HashMap<String, String> map = (HashMap<String, String>) maListViewPerso.getItemAtPosition(position);
-				        		//on créer une boite de dialogue
+				        		//on crï¿½er une boite de dialogue
 				        		AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
-				        		//on attribut un titre à notre boite de dialogue
-				        		adb.setTitle("Sélection Item");
-				        		//on insère un message à notre boite de dialogue, et ici on affiche le titre de l'item cliqué
+				        		//on attribut un titre ï¿½ notre boite de dialogue
+				        		adb.setTitle("Sï¿½lection Item");
+				        		//on insï¿½re un message ï¿½ notre boite de dialogue, et ici on affiche le titre de l'item cliquï¿½
 				        		adb.setMessage("Votre choix : "+map.get("titre"));
-				        		//on indique que l'on veut le bouton ok à notre boite de dialogue
+				        		//on indique que l'on veut le bouton ok ï¿½ notre boite de dialogue
 				        		adb.setPositiveButton("Ok", null);
 				        		//on affiche la boite de dialogue
 				        		adb.show();
@@ -150,7 +156,7 @@ public class MainActivity extends Activity {
  
 
  
-        //On refait la manip plusieurs fois avec des données différentes pour former les items de notre ListView
+        //On refait la manip plusieurs fois avec des donnï¿½es diffï¿½rentes pour former les items de notre ListView
  
       
  
