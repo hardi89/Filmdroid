@@ -166,10 +166,11 @@ public class Movie implements Parcelable {
 	};
 
 	public Movie(Parcel in) {
-		this.name = in.readString();
-		this.date = in.readString();
-		this.id = in.readInt();
-		this.note = in.readDouble();
-		this.affiche = in.readParcelable(Bitmap.class.getClassLoader());
+		this.mFirstName = in.readString();
+		this.mLastName = in.readString();
+		this.mPseudo = in.readString();
+		this.mMail = in.readString();
+		this.mTwitter = in.readString();
+		this.mGooglePlus = in.readString();
 	}
 }
