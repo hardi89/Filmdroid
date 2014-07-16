@@ -41,7 +41,7 @@ import android.widget.TextView;
 import android.os.Build;
 import android.provider.MediaStore.Images;
 
-public class MainActivity extends TabActivity {
+public class secondactivity  extends Activity{
 	private Activity myact = null;
 	private ListView maListViewPerso;
 	private TabHost tabHost;
@@ -50,24 +50,7 @@ public class MainActivity extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		TabHost tabHost = getTabHost();
-        
-        // Tab for Photos
-        TabSpec photospec = tabHost.newTabSpec("List");
-        // setting Title and Icon for the Tab
-        photospec.setIndicator("Photos", getResources().getDrawable(R.drawable.ic_launcher));
-        Intent photosIntent = new Intent(this, secondactivity.class);
-        photospec.setContent(photosIntent);
-        // Tab for Songs
-        TabSpec songspec = tabHost.newTabSpec("Favorite");       
-        songspec.setIndicator("Songs", getResources().getDrawable(R.drawable.ic_launcher));
-
-        songspec.setContent(photosIntent);
-        // Adding all TabSpec to TabHost
-        tabHost.addTab(photospec); // Adding photos tab
-        tabHost.addTab(songspec); // Adding songs tab // Adding videos tab
-        
+		setContentView(R.layout.main2);       
 	    maListViewPerso = (ListView) findViewById(R.id.listviewperso);
 		myact=this;
         //Cr�ation de la ArrayList qui nous permettra de remplire la listView

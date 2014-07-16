@@ -57,7 +57,7 @@ public class MainActivity extends TabActivity {
         TabSpec photospec = tabHost.newTabSpec("List");
         // setting Title and Icon for the Tab
         photospec.setIndicator("Photos", getResources().getDrawable(R.drawable.ic_launcher));
-        Intent photosIntent = new Intent(this, secondactivity.class);
+        Intent photosIntent = new Intent(this, MainActivity.class);
         photospec.setContent(photosIntent);
         // Tab for Songs
         TabSpec songspec = tabHost.newTabSpec("Favorite");       

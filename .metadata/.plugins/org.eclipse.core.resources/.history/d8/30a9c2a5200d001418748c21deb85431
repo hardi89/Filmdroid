@@ -25,10 +25,6 @@
             android:name="cop.fdiam.droidfilm.DetailMovie"
             android:label="@string/app_name" >
         </activity>
-         <activity
-            android:name="cop.fdiam.droidfilm.secondactivity"
-            android:label="@string/app_name" >
-        </activity>
     </application>
 
 </manifest>
