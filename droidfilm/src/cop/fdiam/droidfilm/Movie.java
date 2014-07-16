@@ -66,6 +66,9 @@ public class Movie implements Parcelable {
 	private boolean foradult;
 	private double popularite;
 	private int nbnote;
+	public Movie() {
+	
+	}
 	public Movie(final JSONObject jsonmovie,
 			final Activity act) {
 		try {

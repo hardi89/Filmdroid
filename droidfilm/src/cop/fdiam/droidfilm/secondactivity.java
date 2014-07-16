@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import org.json.JSONArray;
@@ -33,6 +34,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
@@ -46,15 +48,18 @@ public class secondactivity  extends Activity{
 	private ListView maListViewPerso;
 	private TabHost tabHost;
 	private TabSpec tabSpec;
-	
+	private String main;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main2);       
 	    maListViewPerso = (ListView) findViewById(R.id.listviewperso);
 		myact=this;
-        //Cr�ation de la ArrayList qui nous permettra de remplire la listView
-        
+        LinearLayout searchlayout=(LinearLayout)findViewById(R.id.searchlayout);
+        Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+		    this.main=extras.getString("main");
+		}
 		new Thread(new Runnable() {
 			public void run() {
 				HttpRetriever request = new HttpRetriever();
@@ -83,7 +88,13 @@ public class secondactivity  extends Activity{
 					ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
 					 
 			        //On d�clare la HashMap qui contiendra les informations pour un item
-			        
+			        DBManageFavorite manage = new DBManageFavorite(myact);
+			        list= new ArrayList<Movie>();
+			        List all = manage.getAllMovies();
+			        for (Object object : all) {
+						list.add((Movie)object);
+					}
+
 			        for (Movie movie : list) {
 			        	HashMap<String, Object> map;
 						 
@@ -209,7 +220,8 @@ public class secondactivity  extends Activity{
 				        map.put("titre", movie.getName());
 				        //on ins�re un �l�ment description que l'on r�cup�rera dans le textView description cr�� dans le fichier affichageitem.xml
 				        map.put("description", movie.getDate());
-				        //on ins�re la r�f�rence � l'image (convertit en String car normalement c'est un int) que l'on r�cup�rera dans l'imageView cr�� dans le fichier affichageitem.xml
+						// on ins�re la r�f�rence � l'image (convertit en String
+						// car normalement c'est un int) que l'on r�cup�rera dans l'imageView cr�� dans le fichier affichageitem.xml
 				        //map.put("img", getImageUri(myact, movie.getAffiche()));
 				        map.put("img", movie.getAffiche());
 				        //enfin on ajoute cette hashMap dans la arrayList
@@ -224,22 +236,15 @@ public class secondactivity  extends Activity{
 				 
 				        //On attribut � notre listView l'adapter que l'on vient de cr�er
 				        maListViewPerso.setAdapter(mSchedule);
-				        //Enfin on met un �couteur d'�v�nement sur notre listView
+
 			            }}));
 				        
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+
 					e.printStackTrace();
 				}
 				
-				//final String slurped = slurp(test, 50);
-				/*runOnUiThread(new Runnable() {
 
-					@Override
-					public void run() {
-						testview.setText(json.toString());
-					}
-				});*/
 
 			}
 		}).start();

@@ -13,8 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.Checkable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
@@ -26,34 +28,47 @@ public class ExtendedSimpleAdapter extends SimpleAdapter {
 	Context context;
 	LayoutInflater mInflater;
 	ArrayList<Movie> Listfinal;
+
 	public ExtendedSimpleAdapter(Context context,
 			List<HashMap<String, Object>> data, int resource, String[] from,
-			int[] to,ArrayList<Movie> Listfinal) {
+			int[] to, ArrayList<Movie> Listfinal) {
 		super(context, data, resource, from, to);
 		layout = resource;
 		map = data;
 		this.from = from;
 		this.to = to;
 		this.context = context;
-		this.Listfinal=Listfinal;
+		this.Listfinal = Listfinal;
 	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		mInflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View view =this.createViewFromResource(position, convertView, parent,
+		View view = this.createViewFromResource(position, convertView, parent,
 				layout);
-		view.setOnClickListener(new OnClickListener() {
-			
+		LinearLayout checkmovie = (LinearLayout) view
+				.findViewById(R.id.checkmovie);
+		final Movie newmovie = Listfinal.get(position);
+		checkmovie.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {		
+				Intent i = new Intent(context, DetailMovie.class);
+				i.putExtra("movie", newmovie);
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				context.startActivity(i);
+
+			}
+		});
+
+		ImageView addfav = (ImageView) view.findViewById(R.id.addfav);
+		addfav.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
-				Movie newmovie = Listfinal.get(position);
-        		Intent i = new Intent(context,DetailMovie.class);
-        		i.putExtra("movie", newmovie);
-        		i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        		context.startActivity(i);
-				
+				DBManageFavorite manage = new DBManageFavorite(context);
+				manage.addMovie(String.valueOf(newmovie.getId()), newmovie.getName(), newmovie.getDate(), String.valueOf(newmovie.getNote()), newmovie.getAffiche());
 			}
 		});
 		return view;
