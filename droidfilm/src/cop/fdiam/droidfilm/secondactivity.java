@@ -51,7 +51,6 @@ public class secondactivity extends Activity {
 	private TabSpec tabSpec;
 	private boolean onfavorite;
 	private Handler handler;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,10 +79,17 @@ public class secondactivity extends Activity {
 		EditText search = (EditText) findViewById(R.id.search);
 		ManageApi api = new ManageApi(this, maListViewPerso,this);
 		String key = search.getText().toString();
-		if (!key.equals(""))
+		if (!key.equals("") && havechar(key))
 			api.getMovieByKey(search.getText().toString());
 		else
 			api.getAllNewMovies();
+	}
+
+	private boolean havechar(String key) {
+		for(int i=0;i<key.length();i++)
+			if(key.charAt(i)!=' ')
+				return true;
+		return false;
 	}
 	
 	/*public void startHandler() {

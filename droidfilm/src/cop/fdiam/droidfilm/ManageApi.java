@@ -63,6 +63,7 @@ public class ManageApi extends AsyncTask<Void, Void, Void> {
 	@Override
 	protected Void doInBackground(Void... params) {
 		if (url != null) {
+			url=url.replace(" ", "%20");
 			final JSONObject json = jParser.getJSONFromUrl(url);
 			try {
 				JSONArray jsonarray = json.getJSONArray("results");

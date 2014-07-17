@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ExtendedSimpleAdapter extends SimpleAdapter {
 	List<HashMap<String, Object>> map;
@@ -53,98 +55,109 @@ public class ExtendedSimpleAdapter extends SimpleAdapter {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = this.createViewFromResource(position, convertView, parent,
 				layout);
-		LinearLayout checkmovie = (LinearLayout) view
+		final LinearLayout checkmovie = (LinearLayout) view
 				.findViewById(R.id.checkmovie);
 		final Movie newmovie = Listfinal.get(position);
 		final ImageView img = (ImageView) view.findViewById(R.id.img);
 		if (newmovie.getAffiche() == null) {
-			new Thread() {
-				public void run() {
-					HttpRetriever ret = new HttpRetriever();
-					try {
-
-						newmovie.setAffiche(Utils.scaleDownBitmap(
-								ret.retrieveBitmap(newmovie.urlforimage), 200,
-								context));
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					try {
-						myact.runOnUiThread(new Runnable() {
-
-							@Override
-							public void run() {
-								img.setImageBitmap(newmovie.getAffiche());
-							}
-						});
-						Thread.sleep(300);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}.start();
+			loadimage(newmovie, img);
 		} else
-			img.setImageBitmap(newmovie.getAffiche());
-		/*
-		 * loadimageformovie loadimage = new loadimageformovie(context, img,
-		 * newmovie); loadimage.execute();
-		 */
-		checkmovie.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(context, DetailMovie.class);
-				i.putExtra("movie", newmovie);
-				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				context.startActivity(i);
-
-			}
-		});
+			img.setImageBitmap(Utils.scaleDownBitmap(newmovie.getAffiche(),
+					100, context));
 
 		final ImageView addfav = (ImageView) view.findViewById(R.id.addfav);
+
 		final DBManageFavorite manage = new DBManageFavorite(context);
 		if (manage.searchMovie(newmovie))
 			addfav.setImageResource(R.drawable.favori);
 		else
 			addfav.setImageResource(R.drawable.nofavori);
-		addfav.setOnClickListener(new OnClickListener() {
+		final OnClickListener onclick = new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				if (manage.searchMovie(newmovie)) {
-					new AlertDialog.Builder(context)
-							.setTitle("Déjà présent en favori")
-							.setMessage("Voulez-vous le supprimer?")
-							.setPositiveButton(android.R.string.yes,
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											manage.deleteMovie(newmovie);
-											refreshfavoritelist();
-											addfav.setImageResource(R.drawable.nofavori);
-										}
+				if (v.getId() == addfav.getId()) {
+					if (manage.searchMovie(newmovie)) {
+						new AlertDialog.Builder(context)
+								.setTitle("Déjà présent en favori")
+								.setMessage("Voulez-vous le supprimer?")
+								.setPositiveButton(android.R.string.yes,
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												manage.deleteMovie(newmovie);
+												refreshfavoritelist();
+												addfav.setImageResource(R.drawable.nofavori);
+											}
 
-									})
-							.setNegativeButton(android.R.string.no,
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
+										})
+								.setNegativeButton(android.R.string.no,
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
 
-										}
-									})
-							.setIcon(android.R.drawable.ic_dialog_alert).show();
+											}
+										})
+								.setIcon(android.R.drawable.ic_dialog_alert)
+								.show();
+					} else {
+						addfav.setImageResource(R.drawable.favori);
+						manage.addMovie(newmovie);
+						refreshfavoritelist();
+					}
 				} else {
-					manage.addMovie(newmovie);
-					refreshfavoritelist();
-					addfav.setImageResource(R.drawable.favori);
+					if(newmovie.getAffiche()!=null){
+					Intent i = new Intent(context, DetailMovie.class);
+					i.putExtra("movie", newmovie);
+					DetailMovie.idimagelist = addfav;
+					i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					context.startActivity(i);
+					}
+					else{
+						Toast.makeText(context, "Veuillez attendre la fin de chargement de l'image", Toast.LENGTH_LONG).show();
+					}
 				}
 
 			}
-		});
+		};
+
+		checkmovie.setOnClickListener(onclick);
+		addfav.setOnClickListener(onclick);
+
 		return view;
+	}
+
+	private void loadimage(final Movie newmovie, final ImageView img) {
+		new Thread() {
+			public void run() {
+				HttpRetriever ret = new HttpRetriever();
+				try {
+
+					newmovie.setAffiche(Utils.scaleDownBitmap(
+							ret.retrieveBitmap(newmovie.urlforimage), 300,
+							context));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					myact.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							img.setImageBitmap(Utils.scaleDownBitmap(
+									newmovie.getAffiche(), 100, context));
+						}
+					});
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
+
 	}
 
 	private View createViewFromResource(int position, View convertView,

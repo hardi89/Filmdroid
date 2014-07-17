@@ -69,6 +69,7 @@ public class Movie implements Parcelable {
 	private int nbnote;
 	public String urlforimage;
 	public String description;
+	private boolean imgonparcel=true;
 	public Movie() {
 	
 	}
@@ -176,10 +177,7 @@ public class Movie implements Parcelable {
 		in.setDataPosition(0); 
 	}
 
-	public boolean isonfavori() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 
 	public boolean isForadult() {
 		return foradult;

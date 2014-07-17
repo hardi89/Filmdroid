@@ -1,0 +1,105 @@
+package cop.fdiam.droidfilm;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class DetailMovie extends Activity{
+	private Movie movie;
+	private boolean onfavori;
+	private final String lineseparator=System.getProperty("line.separator");
+	private Context context;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.detailmovie);
+		context=this;
+		TextView titre = (TextView)findViewById(R.id.title);
+		TextView detail = (TextView)findViewById(R.id.detail);
+		TextView description = (TextView)findViewById(R.id.description);
+		ImageView image = (ImageView)findViewById(R.id.image);
+		final ImageView addfav = (ImageView)findViewById(R.id.addfav);
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+		    this.movie=extras.getParcelable("movie");
+		}
+		if(this.movie!=null){
+			titre.setText(movie.getName());
+			detail.setText("Sorti le : "+movie.getDate()+lineseparator+"Note : "+movie.getNote()+" pour un total de "+movie.getNbnote()+" votes"+lineseparator+"Popularité : "+movie.getPopularite());
+			description.setText(movie.description);
+			image.setImageBitmap(movie.getAffiche());
+			onfavori=movie.isonfavori();
+			if(onfavori)
+				image.setImageResource(R.drawable.favori);
+		}
+		
+		
+
+		final DBManageFavorite manage = new DBManageFavorite(this);
+		if (manage.searchMovie(this.movie))
+			addfav.setImageResource(R.drawable.favori);
+		else
+			addfav.setImageResource(R.drawable.nofavori);
+		addfav.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (manage.searchMovie(movie)) {
+					new AlertDialog.Builder(context)
+							.setTitle("Déjà présent en favori")
+							.setMessage("Voulez-vous le supprimer?")
+							.setPositiveButton(android.R.string.yes,
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											manage.deleteMovie(movie);
+											refreshfavoritelist();
+											addfav.setImageResource(R.drawable.nofavori);
+										}
+
+									})
+							.setNegativeButton(android.R.string.no,
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+
+										}
+									})
+							.setIcon(android.R.drawable.ic_dialog_alert).show();
+				} else {
+					manage.addMovie(movie);
+					refreshfavoritelist();
+					addfav.setImageResource(R.drawable.favori);
+				}
+
+			}
+		});
+		
+	}
+	
+	private void refreshfavoritelist() {
+		Context contextfavorite = MainActivity.context;
+		ListView listfavorites = MainActivity.listfavorite;
+		if (contextfavorite != null && listfavorites != null) {
+			ManageApi api = new ManageApi(contextfavorite, listfavorites, this);
+			api.getAllFavoris();
+		}
+
+	}
+	public void favori(View v){
+		if(onfavori)
+			;//delete
+		else
+			;//add
+	}
+
+}
