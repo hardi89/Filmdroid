@@ -1,0 +1,28 @@
+package cop.fdiam.droidfilm;
+
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.widget.ImageView;
+
+public class loadimageformovie extends AsyncTask<Void, Void, Void>{
+	private ImageView imgload;
+	private Movie movie;
+	private Bitmap affiche;
+	public loadimageformovie(ImageView img,Movie movie){
+		imgload = img;
+		this.movie=movie;
+		
+	}
+	@Override
+	protected Void doInBackground(Void... params) {
+		final HttpRetriever ret = new HttpRetriever();
+		affiche = Utils.scaleDownBitmap(ret.retrieveBitmap(urlforimage),200,myact);
+		return null;
+	}
+	
+	@Override
+	protected void onPostExecute(Void result) {
+		movie.setAffiche(affiche);
+		super.onPostExecute(result);
+	}
+}

@@ -28,23 +28,24 @@ public class DBManageFavorite {
 	public void close() {
 		dbFavorite.close();
 	}
-	
+
 	public void open() throws SQLException {
 
-        database = dbFavorite.getWritableDatabase();
-    }
-	
-	public void addMovie(String id, String name, String date, String note,
-			Bitmap image) {
+		database = dbFavorite.getWritableDatabase();
+	}
+
+	public void addMovie(Movie movie) {
 
 		ContentValues values = new ContentValues();
-		values.put(DBFavoriteMovies.MOVIE_ID, id);
-		values.put(DBFavoriteMovies.MOVIE_NAME, name);
-		values.put(DBFavoriteMovies.MOVIE_DATE, date);
-		values.put(DBFavoriteMovies.MOVIE_NOTE, note);
-		values.put(DBFavoriteMovies.MOVIE_IMAGE, getBytes(image));
+		values.put(DBFavoriteMovies.MOVIE_ID, movie.getId());
+		values.put(DBFavoriteMovies.MOVIE_NAME, movie.getName());
+		values.put(DBFavoriteMovies.MOVIE_DATE, movie.getDate());
+		values.put(DBFavoriteMovies.MOVIE_NOTE, movie.getNote());
+		values.put(DBFavoriteMovies.MOVIE_IMAGE, getBytes(movie.getAffiche()));
 
-		database.insert(DBFavoriteMovies.FAVORITES, null, values);
+		if (!searchMovie(movie))
+			database.insert(DBFavoriteMovies.FAVORITES, null, values);
+
 	}
 
 	public void deleteMovie(Movie movie) {
@@ -53,8 +54,8 @@ public class DBManageFavorite {
 				+ "=" + id, null);
 	}
 
-	public List getAllMovies() {
-		List movies = new ArrayList();
+	public ArrayList<Movie> getAllMovies() {
+		ArrayList<Movie> movies = new ArrayList<Movie>();
 		Cursor cursor = database.query(DBFavoriteMovies.FAVORITES,
 				MOVIE_TABLE_COLUMNS, null, null, null, null, null);
 
@@ -85,5 +86,23 @@ public class DBManageFavorite {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 		return stream.toByteArray();
+	}
+
+	public Boolean searchMovie(Movie movie) {
+		Cursor cursor = database.query(DBFavoriteMovies.FAVORITES,
+				MOVIE_TABLE_COLUMNS,
+				DBFavoriteMovies.MOVIE_ID + " = " + movie.getId(), null, null,
+				null, null);
+		if (cursor.getCount() != 0) {
+			cursor.moveToFirst();
+			Movie movieResult = parseMovie(cursor);
+			cursor.close();
+			if (movieResult == null) {
+				return false;
+			}
+		
+		return true;
+		}
+		return false;
 	}
 }

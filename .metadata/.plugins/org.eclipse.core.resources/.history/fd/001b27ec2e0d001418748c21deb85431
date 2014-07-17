@@ -1,0 +1,81 @@
+package cop.fdiam.droidfilm;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.content.Context;
+import android.util.Log;
+
+public class ManageApi {
+	private Context myact;
+	private final String apikey = "ca2145f2cd78643fae53b88ee4cf5b2d";
+	public ManageApi(Context context) {
+		this.myact = context;
+	}
+
+	public void getAllNewMovies() {
+		HttpRetriever request = new HttpRetriever();
+
+		JSONParser jParser = new JSONParser();
+		final JSONObject json = jParser
+				.getJSONFromUrl("https://api.themoviedb.org/3/movie/upcoming?api_key="+apikey);
+		try {
+			JSONArray jsonarray = json.getJSONArray("results");
+			Log.v("testjsonarray", "testjsonarray "
+					+ jsonarray.get(0).toString());
+			ArrayList<Movie> list = new ArrayList<Movie>();
+			for (int i = 0; i < jsonarray.length(); i++) {
+				list.add(new Movie(jsonarray.getJSONObject(i), myact));
+
+			}
+
+			for (int i = 0; i < list.size(); i++)
+				Log.v("listmovie", "listmovie " + list.get(i).toString());
+
+			ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String, Object>>();
+
+			DBManageFavorite manage = new DBManageFavorite(myact);
+			/*
+			 * list= new ArrayList<Movie>(); List all = manage.getAllMovies();
+			 * for (Object object : all) { list.add((Movie)object); }
+			 */
+
+			for (Movie movie : list) {
+				HashMap<String, Object> map;
+
+				map = new HashMap<String, Object>();
+
+				map.put("titre", movie.getName());
+
+				map.put("description", movie.getDate());
+
+				map.put("img", movie.getAffiche());
+				listItem.add(map);
+			}
+			final ArrayList<HashMap<String, Object>> listIem2 = listItem;
+			final ArrayList<Movie> Listfinal = list;
+					ExtendedSimpleAdapter mSchedule = new ExtendedSimpleAdapter(
+							myact, listIem2,
+							R.layout.fragment_main, new String[] { "img",
+									"titre", "description" }, new int[] {
+									R.id.img, R.id.titre, R.id.description },
+							Listfinal);
+
+					// On attribut � notre listView l'adapter que l'on vient de
+					// cr�er
+					maListViewPerso.setAdapter(mSchedule);
+					// Enfin on met un �couteur d'�v�nement sur notre listView
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+
+	}
+}

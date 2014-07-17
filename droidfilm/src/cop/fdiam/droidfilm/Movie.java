@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -66,11 +67,13 @@ public class Movie implements Parcelable {
 	private boolean foradult;
 	private double popularite;
 	private int nbnote;
+	public String urlforimage;
+	public String description;
 	public Movie() {
 	
 	}
 	public Movie(final JSONObject jsonmovie,
-			final Activity act) {
+			final Context myact) {
 		try {
 			this.name = jsonmovie.getString("original_title");
 			this.date = jsonmovie.getString("release_date");
@@ -79,38 +82,28 @@ public class Movie implements Parcelable {
 			this.setForadult(jsonmovie.getBoolean("adult"));
 			this.setPopularite(jsonmovie.getDouble("popularity"));
 			this.setNbnote(jsonmovie.getInt("vote_count"));
-			final HttpRetriever ret = new HttpRetriever();;
+			//final HttpRetriever ret = new HttpRetriever();
 			try {
 				String path = "http://image.tmdb.org/t/p/w500";
 				String path2 = jsonmovie.getString("poster_path");
 				if (path2.equals("null"))
 					path2 = jsonmovie.getString("backdrop_path");
-				String total = path + path2;
-				if (!path2.equals("null"))
-					affiche = Utils.scaleDownBitmap(ret.retrieveBitmap(total),200,act);
+				urlforimage = path + path2;
+				new Thread() {
+					public void run() {
+						description=ManageApi.getdescriptionformovie(id);
+					}
+				}.start();
+				/*if (!path2.equals("null"))
+					affiche = Utils.scaleDownBitmap(ret.retrieveBitmap(urlforimage),200,myact);
 				else
-					affiche = BitmapFactory.decodeResource(act.getResources(),
-							R.drawable.ic_launcher);
+					affiche = BitmapFactory.decodeResource(myact.getResources(),
+							R.drawable.ic_launcher);*/
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			/*
-			 * new Thread(new Runnable() { public void run() {
-			 * 
-			 * try { affiche =
-			 * ret.retrieveBitmap("http://image.tmdb.org/t/p/w500"
-			 * +jsonmovie.getString("poster_path")); } catch (JSONException e) {
-			 * // TODO Auto-generated catch block e.printStackTrace(); } catch
-			 * (Exception e) { // TODO Auto-generated catch block
-			 * e.printStackTrace(); } act.runOnUiThread(new Runnable() {
-			 * 
-			 * @Override public void run() {
-			 * imageView.setImageBitmap(getResizedBitmap(affiche, 70, 70));
-			 * view.setText(toString2()); } });
-			 * 
-			 * } }).start();
-			 */
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,6 +149,7 @@ public class Movie implements Parcelable {
 		affiche.writeToParcel(dest, 0);
 		dest.writeString(name);
 		dest.writeString(date);
+		dest.writeString(description);
 		dest.writeInt(id);
 		dest.writeDouble(note);	
 	}
@@ -176,6 +170,7 @@ public class Movie implements Parcelable {
 		this.affiche = Bitmap.CREATOR.createFromParcel(in);
 		this.name = in.readString();
 		this.date = in.readString();
+		this.description = in.readString();
 		this.id = in.readInt();
 		this.note = in.readDouble();
 		in.setDataPosition(0); 

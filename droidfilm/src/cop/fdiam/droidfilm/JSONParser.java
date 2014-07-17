@@ -30,17 +30,8 @@ public class JSONParser {
 	}
 
 	public JSONObject getJSONFromUrl(String url) {
-
-		// Making HTTP request
-			// defaultHttpClient
-			/*
-			 * DefaultHttpClient httpClient = new DefaultHttpClient(); HttpGet
-			 * httpPost = new HttpGet(url); HttpResponse httpResponse =
-			 * httpClient.execute(httpPost); HttpEntity httpEntity =
-			 * httpResponse.getEntity(); is = httpEntity.getContent();
-			 */
-			HttpRetriever request = new HttpRetriever();
-			is = request.retrieveStream(url);
+		HttpRetriever request = new HttpRetriever();
+		is = request.retrieveStream(url);
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, "utf-8"), 8);

@@ -25,7 +25,7 @@ public class DetailMovie extends Activity{
 		if(this.movie!=null){
 			titre.setText(movie.getName());
 			detail.setText("Sorti le : "+movie.getDate()+lineseparator+"Note : "+movie.getNote()+" pour un total de "+movie.getNbnote()+" votes"+lineseparator+"Popularité : "+movie.getPopularite());
-			description.setText(String.valueOf(movie.getNote()));
+			description.setText(movie.description);
 			image.setImageBitmap(movie.getAffiche());
 			onfavori=movie.isonfavori();
 			if(onfavori)

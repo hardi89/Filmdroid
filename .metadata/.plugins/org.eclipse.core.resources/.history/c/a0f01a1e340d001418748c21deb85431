@@ -1,0 +1,104 @@
+package cop.fdiam.droidfilm;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.content.ContentValues;
+
+public class DBManageFavorite {
+
+	private DBFavoriteMovies dbFavorite;
+	private SQLiteDatabase database;
+	private String[] MOVIE_TABLE_COLUMNS = { DBFavoriteMovies.MOVIE_ID,
+			DBFavoriteMovies.MOVIE_NAME, DBFavoriteMovies.MOVIE_DATE,
+			DBFavoriteMovies.MOVIE_NOTE, DBFavoriteMovies.MOVIE_IMAGE };
+
+	public DBManageFavorite(Context context) {
+		dbFavorite = new DBFavoriteMovies(context);
+		open();
+	}
+
+	public void close() {
+		dbFavorite.close();
+	}
+
+	public void open() throws SQLException {
+
+		database = dbFavorite.getWritableDatabase();
+	}
+
+	public void addMovie(Movie movie) {
+
+		ContentValues values = new ContentValues();
+		values.put(DBFavoriteMovies.MOVIE_ID, movie.getId());
+		values.put(DBFavoriteMovies.MOVIE_NAME, movie.getName());
+		values.put(DBFavoriteMovies.MOVIE_DATE, movie.getDate());
+		values.put(DBFavoriteMovies.MOVIE_NOTE, movie.getNote());
+		values.put(DBFavoriteMovies.MOVIE_IMAGE, getBytes(movie.getAffiche()));
+
+		if (!searchMovie(movie))
+			database.insert(DBFavoriteMovies.FAVORITES, null, values);
+
+	}
+
+	public void deleteMovie(Movie movie) {
+		int id = movie.getId();
+		database.delete(DBFavoriteMovies.FAVORITES, DBFavoriteMovies.MOVIE_ID
+				+ "=" + id, null);
+	}
+
+	public List getAllMovies() {
+		List movies = new ArrayList();
+		Cursor cursor = database.query(DBFavoriteMovies.FAVORITES,
+				MOVIE_TABLE_COLUMNS, null, null, null, null, null);
+
+		cursor.moveToFirst();
+		while (!cursor.isAfterLast()) {
+			Movie movie = parseMovie(cursor);
+			movies.add(movie);
+			cursor.moveToNext();
+		}
+		return movies;
+	}
+
+	private Movie parseMovie(Cursor cursor) {
+		Movie movie = new Movie();
+		movie.setId((cursor.getInt(0)));
+		movie.setName(cursor.getString(1));
+		movie.setDate(cursor.getString(2));
+		movie.setNote(cursor.getDouble(3));
+		movie.setAffiche(getPhoto(cursor.getBlob(4)));
+		return movie;
+	}
+
+	public static Bitmap getPhoto(byte[] image) {
+		return BitmapFactory.decodeByteArray(image, 0, image.length);
+	}
+
+	public static byte[] getBytes(Bitmap bitmap) {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+		return stream.toByteArray();
+	}
+
+	public Boolean searchMovie(Movie movie) {
+		Cursor cursor = database.query(DBFavoriteMovies.FAVORITES,
+				MOVIE_TABLE_COLUMNS,
+				DBFavoriteMovies.MOVIE_ID + " = " + movie.getId(), null, null,
+				null, null);
+		cursor.moveToFirst();
+		Movie movieResult = parseMovie(cursor);
+		cursor.close();
+		if (movieResult == null) {
+			return false;
+		}
+		return true;
+	}
+}
